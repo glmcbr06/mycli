@@ -5,8 +5,9 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix
 import joblib
+import pandas as pd
 
 def organize_photos(input_dir, output_dir):
     # Placeholder for photo organization logic
@@ -24,16 +25,16 @@ def train_model(training_data_dir):
     image_size = (100, 100)  # Define a consistent image size
     
     # Load images and labels
-    for person_name in os.listdir(training_data_dir):
-        person_dir = os.path.join(training_data_dir, person_name)
-        if os.path.isdir(person_dir):
-            for image_name in os.listdir(person_dir):
-                image_path = os.path.join(person_dir, image_name)
+    for event_name in os.listdir(training_data_dir):
+        event_dir = os.path.join(training_data_dir, event_name)
+        if os.path.isdir(event_dir):
+            for image_name in os.listdir(event_dir):
+                image_path = os.path.join(event_dir, image_name)
                 image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
                 if image is not None:
                     image = cv2.resize(image, image_size)  # Resize image
                     images.append(image)
-                    labels.append(person_name)
+                    labels.append(event_name)
     
     # Convert lists to numpy arrays
     images = np.array(images)
@@ -58,6 +59,17 @@ def train_model(training_data_dir):
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
     print(f"Model accuracy: {accuracy * 100:.2f}%")
+    
+    # Print confusion matrix with labels
+    conf_matrix = confusion_matrix(y_test, y_pred)
+    conf_matrix_df = pd.DataFrame(conf_matrix, index=['A ' + label for label in label_encoder.classes_], columns=['P ' + label for label in label_encoder.classes_])
+    print(f"Confusion Matrix:\n{conf_matrix_df}")
+    
+    results = pd.DataFrame({
+        'Actual': label_encoder.inverse_transform(y_test),
+        'Predicted': label_encoder.inverse_transform(y_pred)
+    })
+    print(f"Model evaluation results: \n{results}")
     
     # Save the model and label encoder
     joblib.dump(model, 'model.pkl')

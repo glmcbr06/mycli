@@ -21,13 +21,13 @@ def setup_input_output_dirs():
 def create_dummy_data(training_data_dir):
     """Create dummy data for testing."""
     os.makedirs(training_data_dir, exist_ok=True)
-    person_names = ['Alice', 'Bob']
-    for person_name in person_names:
-        person_dir = os.path.join(training_data_dir, person_name)
-        os.makedirs(person_dir, exist_ok=True)
-        for i in range(5):  # Create 5 dummy images per person
+    event_names = ['Birthday', 'Wedding']
+    for event_name in event_names:
+        event_dir = os.path.join(training_data_dir, event_name)
+        os.makedirs(event_dir, exist_ok=True)
+        for i in range(5):  # Create 5 dummy images per event
             image = np.random.randint(0, 256, (100, 100), dtype=np.uint8)
-            cv2.imwrite(os.path.join(person_dir, f'{i}.jpg'), image)
+            cv2.imwrite(os.path.join(event_dir, f'{i}.jpg'), image)
 
 def test_organize_photos(setup_input_output_dirs):
     input_dir, output_dir = setup_input_output_dirs
