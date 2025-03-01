@@ -1,27 +1,56 @@
 import os
 import shutil
-import unittest
+import tempfile
+import cv2
+import numpy as np
+import pytest
 from mycli.commands.photo_organizer import organize_photos, train_model
+import joblib
 
-class TestPhotoOrganizer(unittest.TestCase):
+@pytest.fixture
+def setup_input_output_dirs():
+    input_dir = 'test_input'
+    output_dir = 'test_output'
+    os.makedirs(input_dir, exist_ok=True)
+    with open(os.path.join(input_dir, 'test.jpg'), 'w') as f:
+        f.write('test image content')
+    yield input_dir, output_dir
+    shutil.rmtree(input_dir)
+    shutil.rmtree(output_dir)
 
-    def setUp(self):
-        self.input_dir = 'test_input'
-        self.output_dir = 'test_output'
-        os.makedirs(self.input_dir, exist_ok=True)
-        with open(os.path.join(self.input_dir, 'test.jpg'), 'w') as f:
-            f.write('test image content')
+def create_dummy_data(training_data_dir):
+    """Create dummy data for testing."""
+    os.makedirs(training_data_dir, exist_ok=True)
+    person_names = ['Alice', 'Bob']
+    for person_name in person_names:
+        person_dir = os.path.join(training_data_dir, person_name)
+        os.makedirs(person_dir, exist_ok=True)
+        for i in range(5):  # Create 5 dummy images per person
+            image = np.random.randint(0, 256, (100, 100), dtype=np.uint8)
+            cv2.imwrite(os.path.join(person_dir, f'{i}.jpg'), image)
 
-    def tearDown(self):
-        shutil.rmtree(self.input_dir)
-        shutil.rmtree(self.output_dir)
+def test_organize_photos(setup_input_output_dirs):
+    input_dir, output_dir = setup_input_output_dirs
+    organize_photos(input_dir, output_dir)
+    assert os.path.exists(os.path.join(output_dir, 'test.jpg'))
 
-    def test_organize_photos(self):
-        organize_photos(self.input_dir, self.output_dir)
-        self.assertTrue(os.path.exists(os.path.join(self.output_dir, 'test.jpg')))
-
-    def test_train_model(self):
-        train_model(self.input_dir)  # Just a placeholder test
-
-if __name__ == '__main__':
-    unittest.main()
+def test_train_model():
+    with tempfile.TemporaryDirectory() as training_data_dir:
+        create_dummy_data(training_data_dir)
+        train_model(training_data_dir)
+        
+        # Check if model and label encoder files are created
+        assert os.path.exists('model.pkl')
+        assert os.path.exists('label_encoder.pkl')
+        
+        # Load the model and label encoder
+        model = joblib.load('model.pkl')
+        label_encoder = joblib.load('label_encoder.pkl')
+        
+        # Check if the model and label encoder are not None
+        assert model is not None
+        assert label_encoder is not None
+        
+        # Clean up
+        os.remove('model.pkl')
+        os.remove('label_encoder.pkl')

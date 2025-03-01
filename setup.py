@@ -9,6 +9,11 @@ setup(
         'scikit-learn',  # Assuming scikit-learn for ML tasks
         'opencv-python',  # Assuming OpenCV for image processing
     ],
+    extras_require={
+        'dev': [
+            'pytest',
+        ],
+    },
     entry_points={
         'console_scripts': [
             'mycli=mycli.cli:cli',
