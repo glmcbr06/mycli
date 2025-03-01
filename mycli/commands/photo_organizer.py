@@ -61,7 +61,7 @@ def train_model(training_data_dir):
     print(f"Model accuracy: {accuracy * 100:.2f}%")
     
     # Print confusion matrix with labels
-    conf_matrix = confusion_matrix(y_test, y_pred)
+    conf_matrix = confusion_matrix(y_test, y_pred, labels=np.arange(len(label_encoder.classes_)))
     conf_matrix_df = pd.DataFrame(conf_matrix, index=['A ' + label for label in label_encoder.classes_], columns=['P ' + label for label in label_encoder.classes_])
     print(f"Confusion Matrix:\n{conf_matrix_df}")
     
