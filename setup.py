@@ -1,14 +1,14 @@
 from setuptools import setup, find_packages
 
+# Read the requirements from the requirements.txt file
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
 setup(
     name='mycli',
     version='0.1',
     packages=find_packages(),
-    install_requires=[
-        'click',
-        'scikit-learn',  # Assuming scikit-learn for ML tasks
-        'opencv-python',  # Assuming OpenCV for image processing
-    ],
+    install_requires=requirements,
     extras_require={
         'dev': [
             'pytest',
