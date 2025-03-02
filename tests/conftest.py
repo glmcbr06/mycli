@@ -1,6 +1,8 @@
 import os
 import shutil
 import pytest
+import cv2
+import numpy as np
 
 @pytest.fixture
 def setup_input_output_dirs():
