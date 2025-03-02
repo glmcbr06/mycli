@@ -1,3 +1,4 @@
 click
 scikit-learn
 opencv-python
+pytest
