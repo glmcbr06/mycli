@@ -23,20 +23,6 @@ pip install -r requirements.txt
 
 ## Usage
 
-### Organize Photos
-
-To organize photos in a directory, use the `organize` command. This command takes two arguments: the input directory containing the photos and the output directory where the organized photos will be saved.
-
-```bash
-mycli organize <input_dir> <output_dir>
-```
-
-Example:
-
-```bash
-mycli organize /path/to/input_photos /path/to/output_photos
-```
-
 ### Train Model
 
 To train the machine learning model with the provided training data, use the `train` command. This command takes one argument: the directory containing the training data.
@@ -49,6 +35,20 @@ Example:
 
 ```bash
 mycli train /path/to/training_data
+```
+
+### Classify Single Photo
+
+To classify a single photo, use the `classify-single` command. This command takes one argument: the path to the photo.
+
+```bash
+mycli classify-single <photo_path>
+```
+
+Example:
+
+```bash
+mycli classify-single /path/to/photo.jpg
 ```
 
 ## Development
