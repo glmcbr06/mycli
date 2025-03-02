@@ -113,7 +113,24 @@ class PhotoOrganizer:
         
         print(f"Photos classified and organized from {input_dir} to {output_dir}")
 
+    def classify_photo(self, image_path):
+        """Classify a single photo and return the predicted label."""
+        if self.model is None or self.label_encoder is None:
+            self.model = joblib.load('model.pkl')
+            self.label_encoder = joblib.load('label_encoder.pkl')
+        
+        image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+        if image is not None:
+            image = cv2.resize(image, self.image_size)  # Resize image
+            image_flat = image.reshape(1, -1)
+            prediction = self.model.predict(image_flat)
+            predicted_label = self.label_encoder.inverse_transform(prediction)[0]
+            return predicted_label
+        else:
+            raise ValueError("Image could not be read.")
+
 # Example usage:
 # organizer = PhotoOrganizer()
 # organizer.train_model('path/to/training_data')
 # organizer.classify_and_organize_photos('path/to/input_photos', 'path/to/output_photos')
+# print(organizer.classify_photo('path/to/single_photo.jpg'))

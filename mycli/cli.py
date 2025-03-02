@@ -28,5 +28,13 @@ def classify(input_dir, output_dir):
     organizer = PhotoOrganizer()
     organizer.classify_and_organize_photos(input_dir, output_dir)
 
+@cli.command()
+@click.argument('image_path')
+def classify_single(image_path):
+    """Classify a single photo and print the predicted label."""
+    organizer = PhotoOrganizer()
+    predicted_label = organizer.classify_photo(image_path)
+    print(f"The predicted label for the image is: {predicted_label}")
+
 if __name__ == '__main__':
     cli()
